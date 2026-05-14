@@ -1,9 +1,6 @@
 ![npm version](https://img.shields.io/npm/v/%40rabbx%2Fwatcher?style=for-the-badge)
-![npm downloads](https://img.shields.io/npm/dm/%40rabbx%2Fwatcher?style=for-the-badge)
-![bundle size](https://img.shields.io/bundlephobia/minzip/%40rabbx%2Fwatcher?style=for-the-badge)
-![license](https://img.shields.io/npm/l/%40rabbx%2Fwatcher?style=for-the-badge)
 ![node](https://img.shields.io/node/v/%40rabbx%2Fwatcher?style=for-the-badge)
-![build](https://img.shields.io/github/actions/workflow/status/rabbxdev/watcher/test.yml?branch=main&style=for-the-badge)
+
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M128 24L88 112H136L104 232L168 128H120L128 24Z" fill="#FFB347"/>
 </svg>
