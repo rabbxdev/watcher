@@ -99,6 +99,87 @@ const watcher:Watcher = watch('./src', {
   yieldEvery: 500 // yield to event loop every N files
 }) 
 ```
+## Prod
+```ts
+import { watch } from '@rabbx/watcher';
+
+const watcher = watch(
+  ['./src', './config'], // paths to watch
+  {
+    // 1. Filtering
+    include: ['**/*.ts', '**/*.js', '**/*.json'], // only watch these
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.git/**',
+      '**/*.test.ts'
+    ],
+    ignored: [/\.log$/, /\.tmp$/], // regex or substring match
+    ignoreBinary: true, // skip.png,.mp4,.exe etc
+    followSymlinks: false, // set true if you need symlinks
+
+    // 2. Recursion & depth
+    recursive: true,
+    maxDepth: 10, // prevent runaway scans in huge dirs
+
+    // 3. Performance & stability
+    delay: 100, // debounce events by 100ms
+    yieldEvery: 500, // yield event loop every 500 files during scan
+    ignoreInitial: false, // emit 'add' for existing files on startup
+
+    // 4. Write stability - crucial for VSCode, vim, editors
+    awaitWriteFinish: {
+      stabilityThreshold: 500, // file size unchanged for 500ms
+      pollInterval: 100 // check every 100ms
+    },
+
+    // 5. Fallback strategy
+    usePolling: false, // force polling if true
+    pollInterval: 1000, // polling interval in ms
+    autoFallback: true, // auto-switch to polling if native fails
+    fallbackTimeout: 2000 // wait 2s for native events before fallback
+  }
+);
+
+// 6. Event listeners
+watcher
+ .on('ready', () => {
+    console.log('[watcher] Ready and watching');
+  })
+ .on('add', (path) => {
+    console.log('[add]', path);
+    // trigger build, restart, etc
+  })
+ .on('change', (path) => {
+    console.log('[change]', path);
+    // debounce rebuild here if needed
+  })
+ .on('unlink', (path) => {
+    console.log('[unlink]', path);
+  })
+ .on('all', (event, path) => {
+    // catch-all for logging/metrics
+    // console.log(event, path);
+  })
+ .on('fallback', ({ dir, reason }) => {
+    console.warn(`[watcher] Fallback to polling for ${dir}: ${reason}`);
+    // send to Sentry, Datadog, etc
+  })
+ .on('error', (err) => {
+    console.error('[watcher] Error:', err);
+    // don't crash the process
+  });
+
+// 7. Graceful shutdown
+const shutdown = async () => {
+  console.log('[watcher] Closing...');
+  await watcher.close();
+  process.exit(0);
+};
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+```
 License
 
 MIT

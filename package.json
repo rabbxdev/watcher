@@ -1,6 +1,6 @@
 {
   "name": "@rabbx/watcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tiny universal file watcher for Node, Bun, Deno. Chokidar-compatible.",
   "type": "module",
   "main": "./dist/index.js",
