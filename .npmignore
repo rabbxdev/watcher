@@ -1,0 +1,60 @@
+# Source
+src/
+routes/
+tsconfig.json
+tsconfig.*.json
+examples/
+example.js
+# Tests
+test/
+tests/
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage/
+.nyc_output/
+
+# CI / CD
+.github/
+.gitlab/
+.circleci/
+.travis.yml
+.github/
+.husky/
+
+# Dev configs
+.eslintrc*
+.prettierrc*
+.editorconfig
+jest.config.*
+vitest.config.*
+rollup.config.*
+webpack.config.*
+vite.config.*
+
+# Docs
+README.md
+docs/
+examples/
+benchmarks/
+logo.svg
+*.md
+!README.md
+
+# Misc
+.gitignore
+.npmignore
+.env*
+LICENSE
+Makefile
+Dockerfile
+docker-compose.yml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
