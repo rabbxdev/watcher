@@ -38,7 +38,6 @@ const isSymlink = (entry, st) => {
   return st? st.isSymbolicLink() : false;
 };
 
-// Convert glob to regex. Supports **, *,?, {a,b}
 const globToRegex = (glob) => {
   let regex = '^';
   let i = 0;
@@ -161,6 +160,32 @@ export class Watcher {
     }
   }
 
+  // FIX: moved _list above _watch so it’s defined before use
+  async _list(dir, depth) {
+    if (depth > this.maxDepth) return [];
+    const files = [];
+    try {
+      const fs = await import('node:fs');
+      const entries = this._runtime === 'deno'
+  ? [...Deno.readDirSync(dir)]
+        : fs.readdirSync(dir, { withFileTypes: true });
+      for (const e of entries) {
+        const p = joinPath(dir, e.name);
+        const isDirFlag = isDir(e);
+        if (this._ignore(p, isDirFlag)) continue;
+        if (isDirFlag && this.recursive) {
+          const sub = await this._list(p, depth + 1);
+          files.push(...sub);
+        } else if (!isDirFlag) {
+          files.push(toAbsolute(p));
+        }
+      }
+    } catch (err) {
+      this.emit('error', err);
+    }
+    return files;
+  }
+
   async _watch(dir, depth) {
     const absDir = toAbsolute(dir);
     if (depth > this.maxDepth || this._watchers.has(absDir) || this._pollTimers.has(absDir) || this._ignore(absDir, true)) return;
@@ -254,7 +279,7 @@ export class Watcher {
       try {
         const fs = await import('node:fs');
         const entries = this._runtime === 'deno'
-      ? [...Deno.readDirSync(d)]
+     ? [...Deno.readDirSync(d)]
           : fs.readdirSync(d, { withFileTypes: true });
 
         for (const e of entries) {
@@ -382,11 +407,11 @@ export class Watcher {
 
   async close() {
     await Promise.allSettled([
-  ...Array.from(this._watchers.values()).map(w => {
+ ...Array.from(this._watchers.values()).map(w => {
         try { return w.close?.(); } catch { return Promise.resolve(); }
       }),
-  ...Array.from(this._pollTimers.values()).map(t => clearInterval(t)),
-  ...Array.from(this._fallbackTimers.values()).map(t => clearTimeout(t))
+ ...Array.from(this._pollTimers.values()).map(t => clearInterval(t)),
+ ...Array.from(this._fallbackTimers.values()).map(t => clearTimeout(t))
     ]);
     for (const p of this._pending.values()) clearTimeout(p.t);
     this._watchers.clear();
@@ -398,31 +423,6 @@ export class Watcher {
     this._hasFiredEvent.clear();
     this._polling.clear();
     this._keepAlive = null;
-  }
-
-  async _list(dir, depth) {
-    if (depth > this.maxDepth) return [];
-    const files = [];
-    try {
-      const fs = await import('node:fs');
-      const entries = this._runtime === 'deno'
-   ? [...Deno.readDirSync(dir)]
-        : fs.readdirSync(dir, { withFileTypes: true });
-      for (const e of entries) {
-        const p = joinPath(dir, e.name);
-        const dir = isDir(e);
-        if (this._ignore(p, dir)) continue;
-        if (dir && this.recursive) {
-          const sub = await this._list(p, depth + 1);
-          files.push(...sub);
-        } else if (!dir) {
-          files.push(toAbsolute(p));
-        }
-      }
-    } catch (err) {
-      this.emit('error', err);
-    }
-    return files;
   }
 }
 
