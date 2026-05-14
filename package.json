@@ -1,21 +1,21 @@
 {
   "name": "@rabbx/watcher",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Tiny universal file watcher for Node, Bun, Deno. Chokidar-compatible.",
   "type": "module",
   "main": "./dist/index.js",
   "module":"./dist/index.js",
-  "types":"./dist/index.d.ts",
+  "types":"./src/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "default":"./dist/index.js",
-      "types":"./dist/index.d.ts"
+      "types":"./src/index.d.ts"
     }
   },
   "keywords": ["watcher", "chokidar", "fs", "hmr", "bun", "deno", "node"],
   "license": "MIT",
-  "files":["src/index.d.ts","readme.md","licence.md","logo.svg"],
+  "files":["src/index.d.ts","readme.md","licence.md","logo.svg","dist/*"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rabbx/watcher.git"
@@ -25,7 +25,7 @@
     "url": "https://github.com/rabbxdev/watcher/issues"
   },
   "scripts": {
-    "build": "bun build src/index.js --outdir dist --format esm --minify --external node:*",
+    "build": "bun build src/**.js --outdir dist --format esm --minify --external node:*",
     "dev": "bun --watch src/index.js",
     "test": "bun test",
     "prepublishOnly": "bun run build"
